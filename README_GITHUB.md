@@ -10,13 +10,15 @@ A powerful FastAPI-based application for extracting Multiple Choice Questions (M
 ## ✨ Features
 
 ### 📄 **Multi-Format Support**
+
 - **PDF**: Text-based and scanned documents (with OCR)
 - **Word Documents**: `.docx` files
-- **Excel Spreadsheets**: `.xlsx` files  
+- **Excel Spreadsheets**: `.xlsx` files
 - **Text Files**: `.txt` files
 - **Images**: `.jpg`, `.png`, `.bmp`, `.tiff` with OCR
 
 ### 🧠 **Intelligent MCQ Parsing**
+
 - Multiple question formats: `1.`, `1)`, `Q1:`, `Question: 1`
 - Various option styles: `a.`, `(a)`, `A)`, `A.`
 - Different answer patterns: `Answer: A`, `Ans: A`, `Correct: A`
@@ -24,18 +26,21 @@ A powerful FastAPI-based application for extracting Multiple Choice Questions (M
 - Support for high question counts (100+ questions)
 
 ### 👁️ **Advanced OCR Integration**
+
 - Tesseract OCR for scanned documents
 - Automatic fallback to OCR for image-based PDFs
 - OCR error correction and text cleaning
 - Handles common scanning artifacts
 
 ### 🛡️ **Robust Error Handling**
+
 - Comprehensive file validation
 - Detailed error messages and recommendations
 - Debug endpoints for troubleshooting
 - Graceful degradation for unsupported content
 
 ### 📋 **Rich API Documentation**
+
 - Interactive OpenAPI documentation
 - Multiple endpoints for different use cases
 - Detailed response schemas
@@ -59,11 +64,13 @@ cd mcq-extractor-api
 ### 2. Install Dependencies
 
 **Using UV (Recommended):**
+
 ```bash
 uv sync
 ```
 
 **Using pip:**
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -71,17 +78,20 @@ pip install -r requirements.txt
 ### 3. Install Tesseract OCR
 
 **Windows:**
+
 ```bash
 # Download from: https://github.com/UB-Mannheim/tesseract/wiki
 # Add to system PATH
 ```
 
 **macOS:**
+
 ```bash
 brew install tesseract
 ```
 
 **Linux:**
+
 ```bash
 sudo apt-get install tesseract-ocr
 ```
@@ -102,21 +112,21 @@ uv run python -m uvicorn main:app --reload --host 127.0.0.1 --port 8000
 
 ### Core Endpoints
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/` | GET | Welcome message |
-| `/health` | GET | Health check |
-| `/supported-formats` | GET | List supported file formats |
-| `/extract-mcq` | POST | Extract MCQs (auto-detects method) |
-| `/extract-mcq-ocr` | POST | Force OCR extraction |
-| `/extract-mcq-detailed` | POST | Detailed extraction with statistics |
+| Endpoint                | Method | Description                         |
+| ----------------------- | ------ | ----------------------------------- |
+| `/`                     | GET    | Welcome message                     |
+| `/health`               | GET    | Health check                        |
+| `/supported-formats`    | GET    | List supported file formats         |
+| `/extract-mcq`          | POST   | Extract MCQs (auto-detects method)  |
+| `/extract-mcq-ocr`      | POST   | Force OCR extraction                |
+| `/extract-mcq-detailed` | POST   | Detailed extraction with statistics |
 
 ### Debug & Analysis Endpoints
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/debug-pdf` | POST | Analyze PDF extraction capabilities |
-| `/test-ocr` | POST | Test OCR on images |
+| Endpoint     | Method | Description                         |
+| ------------ | ------ | ----------------------------------- |
+| `/debug-pdf` | POST   | Analyze PDF extraction capabilities |
+| `/test-ocr`  | POST   | Test OCR on images                  |
 
 ## 💡 Usage Examples
 
@@ -174,12 +184,14 @@ python test_ocr_errors.py
 ## 📊 Supported MCQ Formats
 
 ### Question Formats
+
 - `1. What is the capital of France?`
 - `1) What is the capital of France?`
 - `Q1: What is the capital of France?`
 - `Question: 1 What is the capital of France?`
 
 ### Option Formats
+
 - Single line: `a. Paris b. London c. Berlin d. Madrid`
 - Multi-line:
   ```
@@ -191,6 +203,7 @@ python test_ocr_errors.py
 - Parentheses: `(a) Paris (b) London (c) Berlin (d) Madrid`
 
 ### Answer Formats
+
 - `Answer: A`
 - `Ans: A`
 - `Correct: A`
@@ -231,6 +244,7 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\path\to\tesseract.exe'
 ### Common Issues
 
 **OCR Not Working:**
+
 ```bash
 # Check Tesseract installation
 tesseract --version
@@ -240,11 +254,13 @@ tesseract --version
 ```
 
 **Poor OCR Quality:**
+
 - Use higher resolution scans (300+ DPI)
 - Ensure good contrast and clear text
 - Use the `/debug-pdf` endpoint to analyze extraction quality
 
 **Missing Questions:**
+
 - Check question numbering format
 - Use `/extract-mcq-detailed` for statistics
 - Verify file isn't corrupted or password-protected

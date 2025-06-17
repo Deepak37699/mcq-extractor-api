@@ -3,7 +3,8 @@
 ## 📋 Your MCQ Extractor API is ready for GitHub!
 
 ### ✅ **Current Status:**
-- ✅ Git repository initialized  
+
+- ✅ Git repository initialized
 - ✅ All files committed (33 files, 4380+ lines)
 - ✅ GitHub-ready documentation created
 - ✅ License and requirements.txt added
@@ -28,6 +29,7 @@
 After creating the repository, GitHub will show you commands. Use these:
 
 ### **Option A: Using GitHub's suggested commands**
+
 ```bash
 cd "e:\mcq extractor api"
 git remote add origin https://github.com/YOUR_USERNAME/mcq-extractor-api.git
@@ -36,6 +38,7 @@ git push -u origin main
 ```
 
 ### **Option B: If you prefer master branch**
+
 ```bash
 cd "e:\mcq extractor api"
 git remote add origin https://github.com/YOUR_USERNAME/mcq-extractor-api.git
@@ -49,7 +52,9 @@ git push -u origin master
 ## 📝 **STEP 3: Post-Upload Setup**
 
 ### **1. Set Main README**
+
 After uploading, rename `README_GITHUB.md` to `README.md` on GitHub:
+
 - Go to your repository
 - Click on `README_GITHUB.md`
 - Click the pencil icon (Edit)
@@ -57,7 +62,9 @@ After uploading, rename `README_GITHUB.md` to `README.md` on GitHub:
 - Commit changes
 
 ### **2. Create Repository Topics**
+
 Add these topics to help people find your project:
+
 - `fastapi`
 - `ocr`
 - `mcq-extraction`
@@ -68,7 +75,9 @@ Add these topics to help people find your project:
 - `machine-learning`
 
 ### **3. Enable GitHub Pages (Optional)**
+
 For project documentation:
+
 - Go to Settings → Pages
 - Source: Deploy from branch
 - Branch: main/master
@@ -81,24 +90,28 @@ For project documentation:
 After pushing, your repository should contain:
 
 ### **📁 Core Files:**
+
 - ✅ `main.py` - Main FastAPI application
-- ✅ `pyproject.toml` - UV project configuration  
+- ✅ `pyproject.toml` - UV project configuration
 - ✅ `requirements.txt` - Pip dependencies
 - ✅ `README_GITHUB.md` - Comprehensive documentation
 - ✅ `LICENSE` - MIT License
 
 ### **📁 Documentation:**
+
 - ✅ `README.md` - Current project README
 - ✅ `TEST_REPORT.md` - Test results
 - ✅ `TESSERACT_INSTALL.md` - OCR setup guide
 - ✅ Various improvement reports
 
 ### **📁 Tests:**
+
 - ✅ `test_*.py` - Comprehensive test suite
 - ✅ `final_test.py` - Production readiness tests
 - ✅ Sample files and test data
 
 ### **📁 Configuration:**
+
 - ✅ `.github/` - GitHub configuration
 - ✅ `.vscode/` - VS Code settings
 - ✅ `.gitignore` - Proper exclusions
@@ -108,11 +121,13 @@ After pushing, your repository should contain:
 ## 🚀 **STEP 5: Share Your Project**
 
 ### **📢 Project URLs (after upload):**
+
 - **Repository:** `https://github.com/YOUR_USERNAME/mcq-extractor-api`
 - **Documentation:** Available at `/docs` when running
 - **Live Demo:** Host on Railway, Heroku, or Vercel
 
 ### **📱 Share on Social Media:**
+
 ```
 🚀 Just built an MCQ Extractor API with FastAPI!
 
@@ -134,7 +149,7 @@ Check it out: https://github.com/YOUR_USERNAME/mcq-extractor-api
 After completing the upload:
 
 - [ ] Repository created on GitHub
-- [ ] All 33 files uploaded successfully  
+- [ ] All 33 files uploaded successfully
 - [ ] README.md displays properly
 - [ ] Clone and test: `git clone https://github.com/YOUR_USERNAME/mcq-extractor-api.git`
 - [ ] Dependencies install: `pip install -r requirements.txt`
@@ -146,12 +161,14 @@ After completing the upload:
 ## 🔧 **Troubleshooting**
 
 ### **Authentication Issues:**
+
 ```bash
 # If prompted for credentials
 git remote set-url origin https://USERNAME:TOKEN@github.com/USERNAME/mcq-extractor-api.git
 ```
 
 ### **Branch Issues:**
+
 ```bash
 # Check current branch
 git branch
@@ -161,6 +178,7 @@ git branch -M main
 ```
 
 ### **Push Issues:**
+
 ```bash
 # Force push if needed (use carefully)
 git push -f origin main
