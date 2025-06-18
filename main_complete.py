@@ -74,61 +74,59 @@ class MCQExtractor:
             r'^Answer:\s*([A-Da-d])',
             r'^Ans:\s*([A-Da-d])',
             r'^Correct:\s*([A-Da-d])',
-            r'^Answer\s*[:\.\-]?\s*([A-Da-d])',  # Added period for "Answer. B"
-            r'^Correct\s*Answer\s*[:\.\-]?\s*([A-Da-d])',  # Added period
-            r'^Ans\s*[:\.\-]?\s*([A-Da-d])',  # Added period
+            r'^Answer\s*[:\-]?\s*([A-Da-d])',
+            r'^Correct\s*Answer\s*[:\-]?\s*([A-Da-d])',
+            r'^Ans\s*[:\-]?\s*([A-Da-d])',
             r'\b([A-Da-d])\s*\)\s*$',  # Answer at end of line
             r'^\s*([A-Da-d])\s*$',     # Single letter answer
             r'Answer\s*is\s*([A-Da-d])',
-            r'Correct\s*option\s*[:\.\-]?\s*([A-Da-d])',  # Added period
+            r'Correct\s*option\s*[:\-]?\s*([A-Da-d])',
             r'\b([A-Da-d])\s*is\s*correct',
             r'Option\s*([A-Da-d])\s*is\s*correct',
         ]
 
     def extract_text_from_pdf(self, file_content: bytes) -> str:
         """Extract text from PDF file using multiple methods with page-by-page processing"""
-        text = ""
-        extraction_errors = []
-          # Method 1: Try PyMuPDF (fitz) first - usually better for complex layouts
         try:
-            pdf_doc = fitz.open(stream=file_content, filetype="pdf")
-            for page_num in range(pdf_doc.page_count):
-                page = pdf_doc.load_page(page_num)  # Fixed: use load_page() instead of page()
-                page_text = page.get_text()
-                if page_text.strip():
-                    text += f"\n--- Page {page_num + 1} ---\n{page_text}\n"
-            pdf_doc.close()
+            text = ""
             
-            if text.strip():
-                return self._preprocess_text(text)
-        except Exception as e:
-            extraction_errors.append(f"PyMuPDF: {str(e)}")
-            print(f"PyMuPDF extraction failed: {e}")
-        
-        # Method 2: Try PyPDF2 as fallback
-        try:
-            pdf_reader = PyPDF2.PdfReader(io.BytesIO(file_content))
-            for page_num, page in enumerate(pdf_reader.pages):
-                page_text = page.extract_text()
-                if page_text.strip():
-                    text += f"\n--- Page {page_num + 1} ---\n{page_text}\n"
+            # Method 1: Try PyMuPDF (fitz) first - usually better for complex layouts
+            try:
+                pdf_doc = fitz.open(stream=file_content, filetype="pdf")
+                for page_num in range(pdf_doc.page_count):
+                    page = pdf_doc.page(page_num)
+                    page_text = page.get_text()
+                    if page_text.strip():
+                        text += f"\n--- Page {page_num + 1} ---\n{page_text}\n"
+                pdf_doc.close()
+                
+                if text.strip():
+                    return self._preprocess_text(text)
+            except Exception as e:
+                print(f"PyMuPDF extraction failed: {e}")
             
-            if text.strip():
-                return self._preprocess_text(text)
+            # Method 2: Try PyPDF2 as fallback
+            try:
+                pdf_reader = PyPDF2.PdfReader(io.BytesIO(file_content))
+                for page_num, page in enumerate(pdf_reader.pages):
+                    page_text = page.extract_text()
+                    if page_text.strip():
+                        text += f"\n--- Page {page_num + 1} ---\n{page_text}\n"
+                
+                if text.strip():
+                    return self._preprocess_text(text)
+            except Exception as e:
+                print(f"PyPDF2 extraction failed: {e}")
+            
+            # Method 3: OCR as last resort for scanned PDFs
+            try:
+                return self._extract_text_from_scanned_pdf(file_content)
+            except Exception as e:
+                print(f"OCR extraction failed: {e}")
+                raise HTTPException(status_code=400, detail="Could not extract text from PDF. It may be corrupted, protected, or contain only images.")
+                
         except Exception as e:
-            extraction_errors.append(f"PyPDF2: {str(e)}")
-            print(f"PyPDF2 extraction failed: {e}")
-        
-        # Method 3: OCR as last resort for scanned PDFs
-        try:
-            return self._extract_text_from_scanned_pdf(file_content)
-        except Exception as e:
-            extraction_errors.append(f"OCR: {str(e)}")
-            print(f"OCR extraction failed: {e}")
-        
-        # If all methods failed, raise a comprehensive error
-        error_details = "; ".join(extraction_errors)
-        raise ValueError(f"Could not extract text from PDF using any method. Errors: {error_details}. The PDF may be corrupted, protected, or contain only images.")
+            raise HTTPException(status_code=400, detail=f"Error reading PDF: {str(e)}")
 
     def _extract_text_from_scanned_pdf(self, file_content: bytes) -> str:
         """Extract text from scanned PDF using OCR"""
@@ -139,7 +137,7 @@ class MCQExtractor:
             
             for page_num in range(pdf_doc.page_count):
                 # Get page as image
-                page = pdf_doc.load_page(page_num)  # Fixed: use load_page() instead of page()
+                page = pdf_doc.page(page_num)
                 pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))  # 2x scaling for better OCR
                 img_data = pix.tobytes("png")
                 
@@ -161,12 +159,12 @@ class MCQExtractor:
             pdf_doc.close()
             
             if not text.strip():
-                raise ValueError("No text could be extracted from the scanned PDF")
+                raise HTTPException(status_code=400, detail="No text could be extracted from the scanned PDF")
             
             return self._preprocess_text(text)
             
         except Exception as e:
-            raise ValueError(f"Error processing scanned PDF with OCR: {str(e)}")
+            raise HTTPException(status_code=400, detail=f"Error processing scanned PDF: {str(e)}")
 
     def extract_text_from_docx(self, file_content: bytes) -> str:
         """Extract text from DOCX file"""
@@ -177,7 +175,7 @@ class MCQExtractor:
                 text += paragraph.text + "\n"
             return text
         except Exception as e:
-            raise ValueError(f"Error reading DOCX file: {str(e)}")
+            raise HTTPException(status_code=400, detail=f"Error reading DOCX file: {str(e)}")
 
     def extract_text_from_xlsx(self, file_content: bytes) -> str:
         """Extract text from Excel file"""
@@ -199,7 +197,7 @@ class MCQExtractor:
             
             return text
         except Exception as e:
-            raise ValueError(f"Error reading Excel file: {str(e)}")
+            raise HTTPException(status_code=400, detail=f"Error reading Excel file: {str(e)}")
 
     def extract_text_from_txt(self, file_content: bytes) -> str:
         """Extract text from plain text file"""
@@ -209,7 +207,7 @@ class MCQExtractor:
             try:
                 return file_content.decode('latin-1')
             except Exception as e:
-                raise ValueError(f"Error reading text file: {str(e)}")
+                raise HTTPException(status_code=400, detail=f"Error reading text file: {str(e)}")
 
     def extract_text_from_image(self, file_content: bytes) -> str:
         """Extract text from image using OCR"""
@@ -228,7 +226,7 @@ class MCQExtractor:
             
             return text
         except Exception as e:
-            raise ValueError(f"Error reading image: {str(e)}")
+            raise HTTPException(status_code=400, detail=f"Error reading image: {str(e)}")
 
     def preprocess_image(self, image):
         """Preprocess image to improve OCR accuracy"""
@@ -236,29 +234,23 @@ class MCQExtractor:
             # Convert to grayscale
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             
-            # Apply Gaussian blur to reduce noise (lighter blur)
-            blurred = cv2.GaussianBlur(gray, (3, 3), 0)
+            # Apply Gaussian blur to reduce noise
+            blurred = cv2.GaussianBlur(gray, (5, 5), 0)
             
-            # Try OTSU thresholding first (often better for clean images)
-            try:
-                _, thresh = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-                return thresh
-            except:
-                pass
-            
-            # Fallback to adaptive thresholding
+            # Apply adaptive thresholding to handle varying lighting
             thresh = cv2.adaptiveThreshold(
                 blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2
             )
             
-            # Light morphological operations to clean up (smaller kernel)
+            # Apply morphological operations to clean up the image
             kernel = np.ones((1, 1), np.uint8)
             processed = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
+            processed = cv2.morphologyEx(processed, cv2.MORPH_OPEN, kernel)
             
             return processed
         except Exception as e:
             print(f"Error in image preprocessing: {e}")
-            # Return simple grayscale if preprocessing fails
+            # Return original image if preprocessing fails
             return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     def parse_mcqs(self, text: str) -> List[Dict[str, Any]]:
@@ -935,22 +927,18 @@ async def extract_mcqs(file: UploadFile = File(...)):
         # Extract text based on file type
         file_extension = file.filename.split('.')[-1].lower()
         
-        try:
-            if file_extension == 'pdf':
-                text = mcq_extractor.extract_text_from_pdf(content)
-            elif file_extension in ['jpg', 'jpeg', 'png', 'bmp', 'tiff']:
-                text = mcq_extractor.extract_text_from_image(content)
-            elif file_extension == 'docx':
-                text = mcq_extractor.extract_text_from_docx(content)
-            elif file_extension in ['xlsx', 'xls']:
-                text = mcq_extractor.extract_text_from_xlsx(content)
-            elif file_extension == 'txt':
-                text = mcq_extractor.extract_text_from_txt(content)
-            else:
-                raise HTTPException(status_code=400, detail=f"Unsupported file type: {file_extension}")
-        except ValueError as e:
-            # Convert ValueError from extraction methods to HTTPException
-            raise HTTPException(status_code=400, detail=str(e))
+        if file_extension == 'pdf':
+            text = mcq_extractor.extract_text_from_pdf(content)
+        elif file_extension in ['jpg', 'jpeg', 'png', 'bmp', 'tiff']:
+            text = mcq_extractor.extract_text_from_image(content)
+        elif file_extension == 'docx':
+            text = mcq_extractor.extract_text_from_docx(content)
+        elif file_extension in ['xlsx', 'xls']:
+            text = mcq_extractor.extract_text_from_xlsx(content)
+        elif file_extension == 'txt':
+            text = mcq_extractor.extract_text_from_txt(content)
+        else:
+            raise HTTPException(status_code=400, detail=f"Unsupported file type: {file_extension}")
         
         if not text.strip():
             raise HTTPException(status_code=400, detail="No text could be extracted from the file")
@@ -976,42 +964,36 @@ async def extract_mcqs(file: UploadFile = File(...)):
             "extraction_summary": {
                 "total_questions": total_questions,
                 "complete_questions": complete_questions,
-                "questions_with_answers": questions_with_answers            },
+                "questions_with_answers": questions_with_answers
+            },
             "mcqs": mcqs
         }
         
-    except HTTPException:
-        # Re-raise HTTPExceptions as they are (don't wrap them)
-        raise
     except Exception as e:
-        # Only wrap unexpected exceptions
-        raise HTTPException(status_code=500, detail=f"Unexpected error processing file: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
 
 @app.post("/extract-mcq-enhanced")
 async def extract_mcqs_enhanced(file: UploadFile = File(...)):
     """Extract MCQs with enhanced processing, math detection, and visual content analysis"""
-    try:        # Read file content
+    try:
+        # Read file content
         content = await file.read()
         
         # Extract text based on file type
         file_extension = file.filename.split('.')[-1].lower()
         
-        try:
-            if file_extension == 'pdf':
-                text = mcq_extractor.extract_text_from_pdf(content)
-            elif file_extension in ['jpg', 'jpeg', 'png', 'bmp', 'tiff']:
-                text = mcq_extractor.extract_text_from_image(content)
-            elif file_extension == 'docx':
-                text = mcq_extractor.extract_text_from_docx(content)
-            elif file_extension in ['xlsx', 'xls']:
-                text = mcq_extractor.extract_text_from_xlsx(content)
-            elif file_extension == 'txt':
-                text = mcq_extractor.extract_text_from_txt(content)
-            else:
-                raise HTTPException(status_code=400, detail=f"Unsupported file type: {file_extension}")
-        except ValueError as e:
-            # Convert ValueError from extraction methods to HTTPException
-            raise HTTPException(status_code=400, detail=str(e))
+        if file_extension == 'pdf':
+            text = mcq_extractor.extract_text_from_pdf(content)
+        elif file_extension in ['jpg', 'jpeg', 'png', 'bmp', 'tiff']:
+            text = mcq_extractor.extract_text_from_image(content)
+        elif file_extension == 'docx':
+            text = mcq_extractor.extract_text_from_docx(content)
+        elif file_extension in ['xlsx', 'xls']:
+            text = mcq_extractor.extract_text_from_xlsx(content)
+        elif file_extension == 'txt':
+            text = mcq_extractor.extract_text_from_txt(content)
+        else:
+            raise HTTPException(status_code=400, detail=f"Unsupported file type: {file_extension}")
         
         if not text.strip():
             raise HTTPException(status_code=400, detail="No text could be extracted from the file")
@@ -1138,14 +1120,11 @@ async def extract_mcqs_enhanced(file: UploadFile = File(...)):
                 "table_extraction": True,
                 "equation_parsing": True,
                 "content_type_classification": True
-            }        }
+            }
+        }
         
-    except HTTPException:
-        # Re-raise HTTPExceptions as they are (don't wrap them)
-        raise
     except Exception as e:
-        # Only wrap unexpected exceptions
-        raise HTTPException(status_code=500, detail=f"Unexpected error processing file: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn

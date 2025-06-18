@@ -1,0 +1,121 @@
+Enhanced MCQ Sample Content - Mathematics and Visual Elements
+
+1. Calculate the derivative of f(x) = 3x² + 2x - 5
+A) f'(x) = 6x + 2
+B) f'(x) = 3x + 2  
+C) f'(x) = 6x² + 2x
+D) f'(x) = 6x - 2
+Answer: A
+
+2. Based on Table 1 shown below, which region has the highest population density?
+
+| Region        | Population    | Area (km²) | Density (per km²) |
+|---------------|---------------|------------|-------------------|
+| Asia          | 4.6 billion   | 44.6 M     | 103              |
+| Europe        | 746 million   | 10.2 M     | 73               |
+| Africa        | 1.3 billion   | 30.3 M     | 43               |
+| North America | 579 million   | 24.7 M     | 23               |
+
+A) North America
+B) Europe
+C) Asia
+D) Africa
+Answer: C
+
+3. The integral ∫(sin(x) + cos(x))dx equals:
+A) -cos(x) + sin(x) + C
+B) cos(x) + sin(x) + C
+C) -cos(x) - sin(x) + C
+D) sin(x) - cos(x) + C
+Answer: A
+
+4. Refer to Figure 2 in the chart above. What type of correlation between variables X and Y is shown?
+A) Positive linear correlation
+B) Negative linear correlation
+C) No correlation
+D) Exponential correlation
+Answer: B
+
+5. Solve the quadratic equation: x² - 5x + 6 = 0
+A) x = 2, x = 3
+B) x = 1, x = 6
+C) x = -2, x = -3
+D) x = 0, x = 5
+Answer: A
+
+6. According to the pie chart showing market share distribution, which company has the largest market share?
+A) Company Alpha (35%)
+B) Company Beta (28%)
+C) Company Gamma (22%)
+D) Company Delta (15%)
+Answer: A
+
+7. Find the limit: lim(x→0) (sin(x)/x)
+A) 0
+B) 1
+C) ∞
+D) -1
+Answer: B
+
+8. The circuit diagram shows three resistors in series: R₁ = 10Ω, R₂ = 20Ω, R₃ = 30Ω. What is the total resistance?
+A) 20Ω
+B) 60Ω
+C) 30Ω
+D) 40Ω
+Answer: B
+
+9. Calculate the area under the curve y = x² from x = 0 to x = 2:
+A) 8/3
+B) 4
+C) 2
+D) 8
+Answer: A
+
+10. Based on the histogram showing test score distribution, in which range do most students fall?
+A) 60-70
+B) 70-80
+C) 80-90
+D) 90-100
+Answer: C
+
+11. Evaluate: √(25) + ∛(27) - π ≈ ?
+A) 4.86
+B) 5.86
+C) 6.86
+D) 7.86
+Answer: A
+
+12. The following table shows quarterly sales data (in millions):
+
+| Quarter | Q1  | Q2  | Q3  | Q4  |
+|---------|-----|-----|-----|-----|
+| 2022    | 15  | 18  | 22  | 25  |
+| 2023    | 20  | 24  | 28  | 32  |
+
+What is the percentage increase from Q1 2022 to Q1 2023?
+A) 25%
+B) 33.3%
+C) 30%
+D) 35%
+Answer: B
+
+13. If log₂(x) = 3, then x = ?
+A) 6
+B) 8
+C) 9
+D) 12
+Answer: B
+
+14. Study the flow chart showing the water cycle process. Which step comes after evaporation?
+A) Precipitation
+B) Condensation
+C) Collection
+D) Infiltration
+Answer: B
+
+15. Calculate the determinant of the matrix A = [[2, 3], [1, 4]]:
+A) 5
+B) 8
+C) 11
+D) 14
+Answer: A
