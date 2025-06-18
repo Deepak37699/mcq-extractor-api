@@ -27,7 +27,7 @@ if os.name == 'nt':  # Windows
 
 app = FastAPI(
     title="MCQ Extractor API",
-    description="API to extract Multiple Choice Questions from uploaded files",
+    description="API to extract Multiple Choice Questions from uploaded files with enhanced mathematical and visual content analysis",
     version="1.0.0"
 )
 

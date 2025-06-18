@@ -1,96 +1,253 @@
 # MCQ Extractor API
 
-This is a FastAPI application that extracts Multiple Choice Questions (MCQ) from uploaded files.
+A robust FastAPI application that extracts Multiple Choice Questions (MCQ) from uploaded files with advanced features including mathematical content detection, visual content analysis, and enhanced OCR processing.
 
-## Features
+## 🚀 Current Status: v1.0.0 (Fully Operational)
 
-- Extract MCQ questions from various file formats (PDF, DOCX, XLSX, TXT, Images)
-- OCR support for image files (JPG, PNG, BMP, TIFF)
-- Image preprocessing for improved OCR accuracy
-- Automatic detection of question patterns
-- Support for different option formats (A), (A), A.
-- Extraction of correct answers when available
-- RESTful API with interactive documentation
+✅ **All Core Features Working**  
+✅ **Enhanced Mathematical & Visual Content Detection**  
+✅ **Improved Error Handling & PDF Processing**  
+✅ **Advanced OCR with Image Preprocessing**  
+✅ **PyMuPDF API Fixed & Optimized**
 
-## Supported File Formats
+## 🌟 Key Features
 
-- **PDF** (.pdf) - Portable Document Format
-- **Word Document** (.docx) - Microsoft Word Document
-- **Excel Spreadsheet** (.xlsx) - Microsoft Excel Spreadsheet
-- **Text File** (.txt) - Plain Text File
-- **JPEG Image** (.jpg, .jpeg) - JPEG images with OCR text extraction
-- **PNG Image** (.png) - PNG images with OCR text extraction
-- **BMP Image** (.bmp) - BMP images with OCR text extraction
-- **TIFF Image** (.tiff) - TIFF images with OCR text extraction
+### Core Extraction Capabilities
 
-## Running the application
+- **Multi-format Support**: PDF, DOCX, XLSX, TXT, Images (JPG/PNG/BMP/TIFF)
+- **Advanced OCR**: Improved image preprocessing for better text extraction
+- **Robust PDF Processing**: Multi-method extraction with PyMuPDF and PyPDF2 fallbacks
+- **Flexible Question Patterns**: Supports various numbering formats (1., Q1:, 1), etc.)
+- **Enhanced Answer Detection**: Recognizes "Answer: A", "Ans. B", standalone letters
 
-To run the application, use the following command:
+### Advanced Content Analysis
+
+- **Mathematical Content Detection**: Symbols (∫, ∑, √, π), equations, formulas
+- **Visual Content Analysis**: Tables, charts, diagrams, images
+- **Content Classification**: mathematical, visual_content, mathematical_with_visual, standard
+- **Table Extraction**: Automatic detection and formatting of tabular data
+
+### Technical Improvements
+
+- **Clean Error Messages**: No more nested error responses
+- **Fixed PyMuPDF API**: Proper use of `load_page()` method
+- **Improved OCR**: OTSU thresholding for better image text extraction
+- **Enhanced Answer Patterns**: Support for period-separated answers ("Answer. B")
+
+## 📊 Supported File Formats
+
+| Format | Extension                                | Processing Method               | Status              |
+| ------ | ---------------------------------------- | ------------------------------- | ------------------- |
+| PDF    | `.pdf`                                   | PyMuPDF + PyPDF2 + OCR fallback | ✅ Fixed & Enhanced |
+| Word   | `.docx`                                  | python-docx                     | ✅ Working          |
+| Excel  | `.xlsx`, `.xls`                          | openpyxl                        | ✅ Working          |
+| Text   | `.txt`                                   | Direct text processing          | ✅ Working          |
+| Images | `.jpg`, `.jpeg`, `.png`, `.bmp`, `.tiff` | OCR with preprocessing          | ✅ Enhanced         |
+
+## 🛠 Installation & Setup
+
+### Prerequisites
+
+- Python 3.8+
+- Tesseract OCR (for image processing)
+
+### Install Dependencies
 
 ```bash
-uv run uvicorn main:app --reload
+pip install -r requirements.txt
 ```
 
-The API will be available at:
+### Tesseract Setup (Windows)
 
-- Main application: `http://127.0.0.1:8000`
-- Interactive API docs: `http://127.0.0.1:8000/docs`
-- Alternative API docs: `http://127.0.0.1:8000/redoc`
-
-## API Endpoints
-
-### POST /extract-mcq
-
-Upload a file to extract MCQ questions.
-
-**Request**: Multipart form with file upload
-**Response**: JSON containing extracted MCQ questions
-
-### GET /supported-formats
-
-Get list of supported file formats.
-
-### GET /health
-
-Health check endpoint.
-
-## Important Note for Image Processing
-
-**Tesseract OCR Engine Required**: For image processing functionality to work, you need to install Tesseract OCR on your system:
-
-### Windows:
-
-1. Download Tesseract from: https://github.com/UB-Mannheim/tesseract/wiki
-2. Install it (usually to `C:\Program Files\Tesseract-OCR\`)
-3. Add the installation path to your system PATH environment variable
-
-### Alternative (if Tesseract is not in PATH):
-
-You may need to specify the Tesseract path in your code:
-
-```python
-import pytesseract
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+```bash
+# Download and install from: https://github.com/UB-Mannheim/tesseract/wiki
+# Default path: C:\Program Files\Tesseract-OCR\tesseract.exe
 ```
 
-## Example MCQ Format
+## 🚀 Running the Application
 
-The API can detect MCQ questions in various formats:
+### Start the Server
 
+```bash
+uvicorn main:app --reload
 ```
-1. What is the capital of France?
-A) London
-B) Berlin
-C) Paris
-D) Madrid
-Answer: C
 
-Q2: Which planet is closest to the Sun?
-(A) Venus
-(B) Mercury
-(C) Earth
-(D) Mars
-Ans: B
+### Access Points
+
+- **Main API**: `http://localhost:8000`
+- **Interactive Docs**: `http://localhost:8000/docs`
+- **ReDoc**: `http://localhost:8000/redoc`
+
+## 📡 API Endpoints
+
+### Core Endpoints
+
+#### `GET /`
+
+Welcome message and API status
+
+#### `GET /health`
+
+Health check endpoint
+
+#### `POST /extract-mcq`
+
+Basic MCQ extraction with standard processing
+
+**Request**: Multipart form with file upload  
+**Response**: JSON with extracted MCQs and basic statistics
+
+#### `POST /extract-mcq-enhanced`
+
+Advanced MCQ extraction with mathematical and visual content analysis
+
+**Request**: Multipart form with file upload  
+**Response**: Enhanced JSON with detailed content analysis
+
+## 📋 Response Format
+
+### Basic Response (`/extract-mcq`)
+
+```json
+{
+  "success": true,
+  "file_info": {
+    "filename": "test.txt",
+    "file_type": "TXT",
+    "file_size_mb": 0.01
+  },
+  "extraction_summary": {
+    "total_questions": 2,
+    "complete_questions": 2,
+    "questions_with_answers": 2
+  },
+  "mcqs": [
+    {
+      "question_number": 1,
+      "question": "What is the capital of France?",
+      "options": {
+        "A": "London",
+        "B": "Berlin",
+        "C": "Paris",
+        "D": "Madrid"
+      },
+      "correct_answer": "C"
+    }
+  ]
+}
+```
+
+### Enhanced Response (`/extract-mcq-enhanced`)
+
+```json
+{
+  "success": true,
+  "file_info": {...},
+  "extraction_summary": {
+    "total_questions": 2,
+    "mathematical_questions": 0,
+    "visual_content_questions": 0,
+    "complete_questions": 2,
+    "questions_with_answers": 2,
+    "question_type_distribution": {"standard": 2}
+  },
+  "document_analysis": {
+    "has_mathematical_content": false,
+    "has_visual_content": false,
+    "mathematical_elements": {...},
+    "visual_elements": {...}
+  },
+  "mcqs": [
+    {
+      "question_number": 1,
+      "question": "What is the capital of France?",
+      "options": {...},
+      "correct_answer": "C",
+      "question_type": "standard",
+      "has_math_content": false,
+      "has_visual_content": false,
+      "content_analysis": {
+        "mathematics": {...},
+        "visual_elements": {...}
+      }
+    }
+  ],
+  "enhanced_features": {
+    "mathematical_notation_support": true,
+    "visual_content_detection": true,
+    "table_extraction": true,
+    "equation_parsing": true,
+    "content_type_classification": true
+  }
+}
+```
+
+## 🔧 Supported Question & Answer Formats
+
+### Question Patterns
+
+- `1. Question text`
+- `Q1: Question text`
+- `1) Question text`
+- `Question: 1 Question text`
+
+### Option Patterns
+
+- `A) Option text`
+- `(A) Option text`
+- `A. Option text`
+- `A Option text`
+
+### Answer Patterns
+
+- `Answer: A`
+- `Ans: B`
+- `Answer. C` (period supported)
+- `Correct: D`
+- Standalone letters
+
+## 🚨 Error Handling
+
+The API provides clean, informative error messages:
+
+- **Invalid PDF**: "Could not extract text from PDF using any method..."
+- **Unsupported Format**: "Unsupported file type: xyz"
+- **No Content**: "No text could be extracted from the file"
+- **No MCQs**: "No MCQs found in the text"
+
+## 🧪 Testing
+
+Run comprehensive tests:
+
+```bash
+python test_comprehensive.py
+```
+
+## 📈 Recent Improvements
+
+### v1.0.0 (Current)
+
+- ✅ Fixed PyMuPDF API error ("Document object has no attribute 'page'")
+- ✅ Enhanced image OCR with improved preprocessing
+- ✅ Clean error messages (no more nested errors)
+- ✅ Enhanced answer detection patterns
+- ✅ Mathematical and visual content analysis
+- ✅ Robust multi-method PDF extraction
+
+## 🔗 Dependencies
+
+See `requirements.txt` for full list. Key dependencies:
+
+- FastAPI & Uvicorn
+- PyMuPDF & PyPDF2 (PDF processing)
+- Pytesseract & OpenCV (OCR & image processing)
+- SymPy & Matplotlib (mathematical analysis)
+- python-docx & openpyxl (Office documents)
+  (B) Mercury
+  (C) Earth
+  (D) Mars
+  Ans: B
+
 ```
 
 ## 🎉 Your API is Ready!
@@ -101,17 +258,19 @@ Ans: B
 
 1. **📤 Upload Your PDF:**
 
-   ```
-   Open: http://127.0.0.1:8000/docs
-   Try: /extract-mcq endpoint
-   Upload: "Apex Civil engineer objective 2080-04-06.pdf"
-   ```
+```
+
+Open: http://127.0.0.1:8000/docs
+Try: /extract-mcq endpoint
+Upload: "Apex Civil engineer objective 2080-04-06.pdf"
+
+````
 
 2. **🧪 Test All Features:**
 
-   ```bash
-   python final_test.py
-   ```
+```bash
+python final_test.py
+````
 
 3. **🔍 Debug PDFs (if needed):**
    ```
